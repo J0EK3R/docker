@@ -2,6 +2,7 @@ FROM debian:jessie
 
 RUN apt-get update && apt-get install -y \
     logrotate libmosquitto1 libstdc++6 libc6 libgcc1 \
+    mc \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -38,6 +39,6 @@ RUN mkdir -p /etc/ebusd \
 
 EXPOSE 8888
 
-COPY runtime/docker-entrypoint.sh /
+COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["-f", "--scanconfig"]

@@ -1,1 +1,1 @@
-This repository serves dockerfiles.
+This dockerfile creates an docker image from the current ebusd development.

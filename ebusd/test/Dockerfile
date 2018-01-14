@@ -1,7 +1,8 @@
 #########################################
 ##            FLAVOR: TEST             ##
 #########################################
-FROM debian:stretch-slim
+#FROM debian:stretch-slim
+FROM debian:stretch
 
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##
@@ -9,8 +10,7 @@ FROM debian:stretch-slim
 # Set correct environment variables 
 ENV EBUSD_ADDRESS="FF"
 ENV EBUSD_SCANCONFIG="full"
-#ENV EBUSD_DEVICE="ebus.fritz.box:5000"
-ENV EBUSD_DEVICE="192.168.0.21:5000"
+ENV EBUSD_DEVICE="ebus.fritz.box:5000"
 ENV EBUSD_LATENCY="80000"
 ENV EBUSD_RECEIVETIMEOUT="25000"
 ENV EBUSD_ANSWER="true"

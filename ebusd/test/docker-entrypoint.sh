@@ -27,7 +27,8 @@ fi
 
 # if environment variable EBUSD_DEVICE is set then append parameter
 if [ "$EBUSD_DEVICE" != "" ]; then
-  set -- "$@" "--device=$EBUSD_DEVICE --nodevicecheck"
+  set -- "$@" "--device=$EBUSD_DEVICE"
+  set -- "$@" "--nodevicecheck"
 fi
 
 # if environment variable EBUSD_LATENCY is set then append parameter

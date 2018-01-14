@@ -1,1 +1,1 @@
-This repository serves dockerfiles for ebusd including messaged definitions for Weishaupt WTC devices.
+This repository serves dockerfiles for ebusd including message definitions for Weishaupt WTC devices.

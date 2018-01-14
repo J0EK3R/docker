@@ -1,22 +1,29 @@
-# flavor: test
+#########################################
+##            FLAVOR: TEST             ##
+#########################################
 FROM debian:stretch-slim
 
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##
 #########################################
 # Set correct environment variables 
-ENV MQTTSERVER="mqtt" MQTTPORT=""
+ENV EBUSD_ADDRESS=""
+ENV EBUSD_DEVICE=""
+ENV EBUSD_LATENCY=""
+ENV EBUSD_RECEIVETIMEOUT=""
 
-ENV EBUSD_VERSION 3.1
-ENV EBUSD_ARCH amd64
+ENV EBUSD_MQTTHOST="mqtt"
+ENV EBUSD_MQTTPORT="1833"
+ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 
-LABEL maintainer "J0EK3R@gmx.net"
-LABEL version "${EBUSD_VERSION}-${EBUSD_ARCH}"
+ENV EBUSD_VERSION="3.1"
+ENV EBUSD_ARCH="amd64"
+
+LABEL maintainer="J0EK3R@gmx.net"
+LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
 # define start-script as entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-#
 CMD ["-f", "--scanconfig"]
 
 #########################################

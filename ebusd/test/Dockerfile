@@ -1,8 +1,8 @@
 #########################################
 ##            FLAVOR: TEST             ##
 #########################################
-#FROM debian:stretch-slim
-FROM debian:stretch
+FROM debian:stretch-slim
+#FROM debian:stretch
 
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##

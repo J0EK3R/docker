@@ -23,7 +23,7 @@ CMD ["-f", "--scanconfig"]
 ##         RUN INSTALL SCRIPT          ##
 #########################################
 # install required packages
-RUN apt-get update 
+RUN apt-get update \
   && apt-get install -y \
     curl \
     libc6 \

@@ -50,10 +50,13 @@ RUN apt-get update \
     autoconf \
     automake \
     g++ \
-    make \
     git \
     libmosquitto-dev \
+    make \
   && rm -rf /var/lib/apt/lists/*
+
+# create directory
+RUN mkdir -p /etc/ebusd
 
 # download message definitions from github and expand them to /etc/ebusd
 RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz \

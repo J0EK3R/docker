@@ -79,10 +79,12 @@ fi
 
 # if environment variable EBUSD_LOGFILE is set then tee console output to logfile
 if [ "$EBUSD_LOGFILE" != "" ]; then
-  set -- "$@" " | tee -a $EBUSD_LOGFILE"
   echo "Starting with commandline: $@" |& tee -a $EBUSD_LOGFILE
+
+  exec "$@" |& tee -a $EBUSD_LOGFILE
 else
   echo "Starting with commandline: $@"
+ 
+ exec "$@"
 fi
 
-exec "$@"

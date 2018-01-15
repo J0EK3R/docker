@@ -2,7 +2,6 @@
 ##            FLAVOR: TEST             ##
 #########################################
 FROM debian:stretch-slim
-#FROM debian:stretch
 
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##
@@ -65,7 +64,6 @@ RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/mas
 
 # copy start-script into container
 COPY docker-entrypoint.sh /
-
 
 #########################################
 ##         EXPORTS AND VOLUMES         ##

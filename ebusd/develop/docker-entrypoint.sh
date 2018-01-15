@@ -77,6 +77,12 @@ if [ "$EBUSD_MQTTHOST" != "" ]; then
   fi
 fi
 
-echo "Starting with commandline: $@"
+# if environment variable EBUSD_LOGFILE is set then tee console output to logfile
+if [ "$EBUSD_LOGFILE" != "" ]; then
+  set -- "$@" " | tee -a $EBUSD_LOGFILE"
+  echo "Starting with commandline: $@" | tee -a $EBUSD_LOGFILE
+else
+  echo "Starting with commandline: $@"
+fi
 
 exec "$@"

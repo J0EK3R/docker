@@ -89,3 +89,4 @@ COPY docker-entrypoint.sh /
 
 # expose port for ebusd
 EXPOSE 8888
+EXPOSE $EBUSD_FRONTAILPORT

@@ -1,5 +1,5 @@
 #########################################
-##           FLAVOR: RELEASE           ##
+##         FLAVOR: RELEASE             ##
 #########################################
 FROM debian:stretch-slim
 
@@ -22,6 +22,8 @@ ENV EBUSD_MQTTPORT="1833"
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 ENV EBUSD_MQTTRETAIN="true"
 
+ENV EBUSD_FRONTAILPORT="80"
+
 ENV EBUSD_VERSION="3.1"
 ENV EBUSD_ARCH="amd64"
 
@@ -30,6 +32,7 @@ LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
 # define start-script as entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]
+#ENTRYPOINT ["/bin/bash"]
 CMD ["-f"]
 
 #########################################
@@ -39,6 +42,8 @@ CMD ["-f"]
 RUN apt-get update \
   && apt-get install -y \
     curl \
+    git \
+    gnupg \
     libc6 \
     libgcc1 \
     libmosquitto1 \
@@ -63,6 +68,17 @@ RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz
 RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
     | tar xz --strip-components=1 -C /etc/ebusd ebusd-configuration-weishaupt-master
 
+# get 
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
+
+# install nodejs package
+RUN apt-get install -y nodejs
+
+# remove ebusd package-file
+#RUN rm nodejs
+
+RUN npm i frontail -g
+
 # copy start-script into container
 COPY docker-entrypoint.sh /
 
@@ -73,3 +89,4 @@ COPY docker-entrypoint.sh /
 
 # expose port for ebusd
 EXPOSE 8888
+EXPOSE $EBUSD_FRONTAILPORT

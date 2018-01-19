@@ -79,10 +79,20 @@ fi
 
 # if environment variable EBUSD_LOGFILE is set then tee console output to logfile
 if [ "$EBUSD_LOGFILE" != "" ]; then
-  echo "Starting with commandline: $@" |& tee -a $EBUSD_LOGFILE
+  # if environment variable EBUSD_FRONTAILPORT is set then start frontail for $EBUSD_LOGFILE
+  # listening on $EBUSD_FRONTAILPORT
+  if [ "$EBUSD_FRONTAILPORT" != "" ]; then
+    FRONTAILCMD="/usr/bin/frontail -p $EBUSD_FRONTAILPORT -l 2000 -n 200 $EBUSD_LOGFILE"
+    echo "Starting with frontail: $FRONTAILCMD" |& tee -a $EBUSD_LOGFILE
+  
+    $FRONTAILCMD |& tee -a $EBUSD_LOGFILE &
+  fi
+
+  echo "Starting ebusd with commandline: $@" |& tee -a $EBUSD_LOGFILE
+
   exec "$@" |& tee -a $EBUSD_LOGFILE
 else
-  echo "Starting with commandline: $@"
-  exec "$@"
+  echo "Starting ebusd with commandline: $@"
+ 
+ exec "$@"
 fi
-

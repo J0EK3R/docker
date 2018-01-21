@@ -86,7 +86,7 @@ RUN chown fhem /opt/fhem/fhem.cfg
 # && /bin/rm  /etc/ssh/ssh_host_*
 # RUN dpkg-reconfigure openssh-server
 
-RUN apt-get update 
+RUN apt-get update \
  && apt-get install -y \
   openssh-server
 RUN mkdir /var/run/sshd

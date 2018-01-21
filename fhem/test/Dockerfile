@@ -1,31 +1,41 @@
 #########################################
 ##            FLAVOR: TEST             ##
 #########################################
-#FROM debian:stretch-slim
-#FROM debian:stretch
-FROM debian:jessie
+#FROM debian:latest
+#FROM debian:jessie
+FROM debian:stretch-slim
 
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##
 #########################################
-# Set correct environment variables 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND noninteractive 
+ENV TERM xterm
 
 LABEL maintainer="J0EK3R@gmx.net"
-
-CMD ["/usr/bin/supervisord"]
 
 #########################################
 ##         RUN INSTALL SCRIPT          ##
 #########################################
-# install required packages
+
+# Install dependencies
 RUN apt-get update
-RUN apt-get install -y \
+
+RUN apt-get -y --force-yes install \
+  supervisor \
+  telnet \
   wget \
-  apt-transport-https
+  curl \
+  vim \
+  git \
+  nano \
+  make \
+  gcc \
+  g++ \
+  apt-transport-https \
+  sudo
 
 # Install perl packages
-RUN apt-get install -y \
+RUN apt-get -y --force-yes install \
   libalgorithm-merge-perl \
   libclass-isa-perl \
   libcommon-sense-perl \
@@ -34,8 +44,8 @@ RUN apt-get install -y \
   libfile-copy-recursive-perl \
   libfile-fcntllock-perl \
   libio-socket-ip-perl \
-  libio-socket-multicast-perl \
   libjson-perl \
+  libnet-telnet-perl \
   libjson-xs-perl \
   libmail-sendmail-perl \
   libsocket-perl \
@@ -43,28 +53,51 @@ RUN apt-get install -y \
   libsys-hostname-long-perl \
   libterm-readkey-perl \
   libterm-readline-perl-perl \
-  libxml-simple-perl \
-  libcrypt-pbkdf2-perl \
-  libcpan-meta-yaml-perl \
-  build-essential
+  libdevice-serialport-perl \
+  libio-socket-ssl-perl \
+  libwww-perl \
+  libcgi-pm-perl \
+  sqlite3 \
+  libdbd-sqlite3-perl \
+  libtext-diff-perl
 
-RUN cpan install Net::MQTT:Simple
-RUN wget -qO - https://debian.fhem.de/archive.key | apt-key add -
-RUN echo "deb https://debian.fhem.de/nightly/ /" | tee -a /etc/apt/sources.list.d/fhem.list
+# configure timezone
+RUN echo Europe/Berlin > /etc/timezone \
+ && dpkg-reconfigure tzdata
 
-RUN apt-get update \
- && apt-get install -y \
-    supervisor \
-    fhem \
-    telnet \
- && rm -rf /var/lib/apt/lists/*
-
+# configure supervisord
 RUN mkdir -p /var/log/supervisor
-
-RUN echo Europe/Berlin > /etc/timezone && dpkg-reconfigure tzdata
-
 COPY ./etc/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# install fhem
+RUN wget http://fhem.de/fhem-5.8.deb
+RUN dpkg -i fhem-5.8.deb
+RUN apt-get install -f
+
+RUN chown fhem /opt/fhem/fhem.cfg
+
+# sshd on port 22 and allow root login / password = empty
+#RUN apt-get -y --force-yes install \
+#   openssh-server \
+# && apt-get clean \
+# && sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config \
+# && sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config \
+# && echo "root:empty" | chpasswd \
+# && /bin/rm  /etc/ssh/ssh_host_*
+# RUN dpkg-reconfigure openssh-server
+
+RUN apt-get update 
+ && apt-get install -y \
+  openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:screencast' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
 
 #########################################
 ##         EXPORTS AND VOLUMES         ##
@@ -73,5 +106,12 @@ COPY ./etc/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 VOLUME ["/opt/fhem"]
 
 # expose port for fhem
-EXPOSE 8083
+EXPOSE 8083 8084 8085
 
+# expose port for ssh-server
+EXPOSE 22
+
+#########################################
+##                START                ##
+######################################### 
+CMD ["/usr/bin/supervisord"]

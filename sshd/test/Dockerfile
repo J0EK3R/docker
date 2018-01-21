@@ -15,14 +15,18 @@ LABEL maintainer="J0EK3R@gmx.net"
 #########################################
 
 # Install dependencies
-RUN apk add --no-cache supervisor
+RUN apk add --update \
+  supervisor \
+ && rm -rf /var/cache/apk/*
 
 # configure supervisord
 RUN mkdir -p /var/log/supervisor
 COPY ./etc/supervisord.conf /etc/supervisord.conf
 
 # sshd on port 22 and allow root login / password = screencast
-RUN apk add --no-cache openssh-server
+RUN apk add --update \
+  openssh-server \
+ && rm -rf /var/cache/apk/*
 
 RUN mkdir /var/run/sshd
 RUN echo 'root:screencast' | chpasswd

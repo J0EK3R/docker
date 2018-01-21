@@ -76,15 +76,7 @@ RUN apt-get install -f
 
 RUN chown fhem /opt/fhem/fhem.cfg
 
-# sshd on port 22 and allow root login / password = empty
-#RUN apt-get -y --force-yes install \
-#   openssh-server \
-# && apt-get clean \
-# && sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config \
-# && sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config \
-# && echo "root:empty" | chpasswd \
-# && /bin/rm  /etc/ssh/ssh_host_*
-# RUN dpkg-reconfigure openssh-server
+# sshd on port 22 and allow root login / password = screencast
 
 RUN apt-get update \
  && apt-get install -y \
@@ -92,6 +84,7 @@ RUN apt-get update \
 RUN mkdir /var/run/sshd
 RUN echo 'root:screencast' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd

@@ -1,5 +1,5 @@
 #########################################
-##           FLAVOR: DEVELOP           ##
+##         FLAVOR: MYDEVELOP           ##
 #########################################
 FROM debian:stretch-slim
 

@@ -6,7 +6,7 @@ FROM debian:stretch-slim
 #########################################
 ##        ENVIRONMENTAL CONFIG         ##
 #########################################
-# Set correct environment variables 
+# Set environment variables 
 ENV EBUSD_ADDRESS="FF"
 ENV EBUSD_SCANCONFIG="full"
 ENV EBUSD_DEVICE="ebus.fritz.box:5000"
@@ -22,6 +22,7 @@ ENV EBUSD_MQTTPORT="1833"
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 ENV EBUSD_MQTTRETAIN="true"
 
+# to disable frontail set empty string
 ENV EBUSD_FRONTAILPORT="80"
 
 ENV EBUSD_VERSION="3.1"
@@ -33,27 +34,23 @@ LABEL version "${EBUSD_VERSION}-${EBUSD_ARCH}-devel"
 #########################################
 ##         RUN INSTALL SCRIPT          ##
 #########################################
-# install required packages
-RUN apt-get update \
-  && apt-get install -y \
+RUN apt-get update
+
+RUN apt-get install -y \
     curl \
-    gnupg \
     libc6 \
     libgcc1 \
     libmosquitto1 \
     libstdc++6 \
-    logrotate \
-  && rm -rf /var/lib/apt/lists/*
+    logrotate
 
-RUN apt-get update \
-  && apt-get install -y \
+RUN apt-get install -y \
     autoconf \
     automake \
     g++ \
     git \
     libmosquitto-dev \
-    make \
-  && rm -rf /var/lib/apt/lists/*
+    make
 
 # create directory
 RUN mkdir -p /etc/ebusd
@@ -87,13 +84,23 @@ RUN rm -rf /build
 ##           INSTALL FRONTAIL          ##
 ######################################### 
 
+RUN apt-get install -y \
+    gnupg
+
 # get 
 RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
 
 # install nodejs package
-RUN apt-get install -y nodejs
+RUN apt-get install -y \
+    nodejs
 
 RUN npm i frontail -g
+
+#########################################
+##               CLEANUP               ##
+######################################### 
+
+RUN rm -rf /var/lib/apt/lists/*
 
 #########################################
 ##           CONTAINER START           ##
@@ -104,7 +111,6 @@ COPY docker-entrypoint.sh /
 
 # define start-script as entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["-f"]
 
 #########################################
 ##         EXPORTS AND VOLUMES         ##

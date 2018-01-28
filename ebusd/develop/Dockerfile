@@ -22,15 +22,13 @@ ENV EBUSD_MQTTPORT="1833"
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 ENV EBUSD_MQTTRETAIN="true"
 
+ENV EBUSD_FRONTAILPORT="80"
+
 ENV EBUSD_VERSION="3.1"
 ENV EBUSD_ARCH="amd64"
 
 LABEL maintainer="J0EK3R@gmx.net"
 LABEL version "${EBUSD_VERSION}-${EBUSD_ARCH}-devel"
-
-# define start-script as entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["-f"]
 
 #########################################
 ##         RUN INSTALL SCRIPT          ##
@@ -67,9 +65,6 @@ RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz
 RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
     | tar xz --strip-components=1 -C /etc/ebusd ebusd-configuration-weishaupt-master
 
-# copy start-script into container
-COPY docker-entrypoint.sh /
-
 #########################################
 ##           BUILD SOURCES             ##
 #########################################
@@ -88,9 +83,33 @@ WORKDIR /
 RUN rm -rf /build
 
 #########################################
+##           INSTALL FRONTAIL          ##
+######################################### 
+
+# get 
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
+
+# install nodejs package
+RUN apt-get install -y nodejs
+
+RUN npm i frontail -g
+
+#########################################
+##           CONTAINER START           ##
+######################################### 
+
+# copy start-script into container
+COPY docker-entrypoint.sh /
+
+# define start-script as entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["-f"]
+
+#########################################
 ##         EXPORTS AND VOLUMES         ##
 ######################################### 
 # Export volumes
 
 # expose port for ebusd
 EXPOSE 8888
+EXPOSE $EBUSD_FRONTAILPORT

@@ -37,6 +37,7 @@ LABEL version "${EBUSD_VERSION}-${EBUSD_ARCH}-devel"
 RUN apt-get update \
   && apt-get install -y \
     curl \
+    gnupg \
     libc6 \
     libgcc1 \
     libmosquitto1 \

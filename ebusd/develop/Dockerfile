@@ -52,6 +52,26 @@ RUN apt-get install -y \
     libmosquitto-dev \
     make
 
+#########################################
+##           BUILD SOURCES             ##
+#########################################
+# change to directory "build"
+WORKDIR /build
+
+# fetch source archive from github, expand it und build
+RUN git clone https://github.com/john30/ebusd.git \
+  && cd ebusd \
+  && ./autogen.sh \
+  && make install-strip
+
+WORKDIR /
+
+# remove directory
+RUN rm -rf /build
+
+#########################################
+##      COPY MESSAGEDEFINITIONS        ##
+#########################################
 # create directory
 RUN mkdir -p /etc/ebusd
 
@@ -62,23 +82,6 @@ RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz
 # download message definitions for Weishaupt WTC devices from github and expand them to /etc/ebusd
 RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
     | tar xz --strip-components=1 -C /etc/ebusd ebusd-configuration-weishaupt-master
-
-#########################################
-##           BUILD SOURCES             ##
-#########################################
-# change to directory "build"
-WORKDIR /build
-
-# fetch source archive from github, expand it und build
-RUN (curl -SL https://github.com/john30/ebusd/archive/master.tar.gz \
-    | tar xz --strip-components=1) \
-  && ./autogen.sh \
-  && make install-strip
-
-WORKDIR /
-
-# remove directory
-RUN rm -rf /build
 
 #########################################
 ##           INSTALL FRONTAIL          ##
@@ -99,6 +102,15 @@ RUN npm i frontail -g
 #########################################
 ##               CLEANUP               ##
 ######################################### 
+
+RUN apt-get remove -y \
+    autoconf \
+    automake \
+    g++ \
+    git \
+    libmosquitto-dev \
+    make \
+ && apt-get autoremove -y
 
 RUN rm -rf /var/lib/apt/lists/*
 

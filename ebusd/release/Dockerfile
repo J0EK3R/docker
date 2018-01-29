@@ -18,7 +18,7 @@ ENV EBUSD_LOGLEVEL="notice"
 ENV EBUSD_LOGFILE="/var/log/ebusd.log"
 
 ENV EBUSD_MQTTHOST="mqtt.fritz.box"
-ENV EBUSD_MQTTPORT="1833"
+ENV EBUSD_MQTTPORT="1883"
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 ENV EBUSD_MQTTRETAIN="true"
 

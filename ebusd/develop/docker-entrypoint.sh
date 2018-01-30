@@ -27,13 +27,13 @@ if [ "$EBUSD_SCANCONFIG" != "" ]; then
   if [ "$EBUSD_SCANCONFIG" == "default" ]; then
     set -- "$@" "-s"
   else
-    set -- "$@" "-s $EBUSD_SCANCONFIG"
+    set -- "$@" "--scanconfig=$EBUSD_SCANCONFIG"
   fi
 fi
 
 # if environment variable EBUSD_DEVICE is set then append parameter
 if [ "$EBUSD_DEVICE" != "" ]; then
-  set -- "$@" "-d $EBUSD_DEVICE"
+  set -- "$@" "--device=$EBUSD_DEVICE"
   # set nodevicecheck
   set -- "$@" "-n"
 fi
@@ -68,12 +68,12 @@ if [ "$EBUSD_MQTTHOST" != "" ]; then
   # override default values
   # if environment variable EBUSD_MQTTPORT is set then override default value
   if [ "$EBUSD_MQTTPORT" != "" ]; then
-    MQTTPORT=$EBUSD_MQTTPORT
+    MQTTPORT="$EBUSD_MQTTPORT"
   fi
 
   # if environment variable EBUSD_MQTTTOPIC is set then override default value
   if [ "$EBUSD_MQTTTOPIC" != "" ]; then
-    MQTTTOPIC=$EBUSD_MQTTTOPIC
+    MQTTTOPIC="$EBUSD_MQTTTOPIC"
   fi
 
   set -- "$@" "--mqtthost=$EBUSD_MQTTHOST"
@@ -95,14 +95,14 @@ if [ "$EBUSD_LOGFILE" != "" ]; then
   # listening on $EBUSD_FRONTAILPORT
   if [ "$EBUSD_FRONTAILPORT" != "" ]; then
     FRONTAILCMD="/usr/bin/frontail -p $EBUSD_FRONTAILPORT -l 2000 -n 200 $EBUSD_LOGFILE"
-    echo "Starting with frontail: $FRONTAILCMD" |& tee -a $EBUSD_LOGFILE
+    echo "Starting with frontail: $FRONTAILCMD" |& tee -a "$EBUSD_LOGFILE"
 
-    $FRONTAILCMD |& tee -a $EBUSD_LOGFILE &
+    "$FRONTAILCMD" |& tee -a "$EBUSD_LOGFILE" &
   fi
 
-  echo "Starting ebusd with commandline: $@" |& tee -a $EBUSD_LOGFILE
+  echo "Starting ebusd with commandline: $@" |& tee -a "$EBUSD_LOGFILE"
 
-  exec "$@" |& tee -a $EBUSD_LOGFILE
+  exec "$@" |& tee -a "$EBUSD_LOGFILE"
 else
   echo "Starting ebusd with commandline: $@"
 

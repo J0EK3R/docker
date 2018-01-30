@@ -13,7 +13,7 @@ if [ "$1" == "" ] ||
 fi
 
 # set parameter "-f" to run ebusd in foreground
-set -- "$@" "--foreground"
+set -- "$@" "--foreground --updatecheck=off"
   
 # if environment variable EBUSD_ADDRESS is set then append parameter
 if [ "$EBUSD_ADDRESS" != "" ]; then

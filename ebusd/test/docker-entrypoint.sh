@@ -17,12 +17,9 @@ fi
 # set parameter "-f" to run ebusd in foreground
 set -- "$@" "-f"
 
-# disable updatecheck
-set -- "$@" "--updatecheck=off"
-  
 # if environment variable EBUSD_ADDRESS is set then append parameter
 if [ "$EBUSD_ADDRESS" != "" ]; then
-  set -- "$@" "-a=$EBUSD_ADDRESS"
+  set -- "$@" "-a $EBUSD_ADDRESS"
 fi
 
 # if environment variable EBUSD_SCANCONFIG is set then append parameter
@@ -30,13 +27,13 @@ if [ "$EBUSD_SCANCONFIG" != "" ]; then
   if [ "$EBUSD_SCANCONFIG" == "default" ]; then
     set -- "$@" "-s"
   else
-    set -- "$@" "-s=$EBUSD_SCANCONFIG"
+    set -- "$@" "-s $EBUSD_SCANCONFIG"
   fi
 fi
 
 # if environment variable EBUSD_DEVICE is set then append parameter
 if [ "$EBUSD_DEVICE" != "" ]; then
-  set -- "$@" "-d=$EBUSD_DEVICE"
+  set -- "$@" "-d $EBUSD_DEVICE"
   # set nodevicecheck
   set -- "$@" "-n"
 fi
@@ -89,6 +86,9 @@ if [ "$EBUSD_MQTTHOST" != "" ]; then
   fi
 fi
 
+# disable updatecheck
+set -- "$@" "--updatecheck=off"
+
 # if environment variable EBUSD_LOGFILE is set then tee console output to logfile
 if [ "$EBUSD_LOGFILE" != "" ]; then
   # if environment variable EBUSD_FRONTAILPORT is set then start frontail for $EBUSD_LOGFILE
@@ -96,7 +96,7 @@ if [ "$EBUSD_LOGFILE" != "" ]; then
   if [ "$EBUSD_FRONTAILPORT" != "" ]; then
     FRONTAILCMD="/usr/bin/frontail -p $EBUSD_FRONTAILPORT -l 2000 -n 200 $EBUSD_LOGFILE"
     echo "Starting with frontail: $FRONTAILCMD" |& tee -a $EBUSD_LOGFILE
-  
+
     $FRONTAILCMD |& tee -a $EBUSD_LOGFILE &
   fi
 
@@ -105,6 +105,6 @@ if [ "$EBUSD_LOGFILE" != "" ]; then
   exec "$@" |& tee -a $EBUSD_LOGFILE
 else
   echo "Starting ebusd with commandline: $@"
- 
- exec "$@"
+
+  exec "$@"
 fi

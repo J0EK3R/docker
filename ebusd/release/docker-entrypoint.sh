@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# exit immediately if a command exits with a non-zero status
 set -e
 
 # default values
@@ -7,34 +9,36 @@ MQTTTOPIC="ebusd/%circuit/%field"
 
 # if first parameter starts with "-" then command is missing
 # insert "ebusd" at first position as command
-if [ "${1#-}" != "$1" ]; then
+if [ "$1" == "" ] || 
+   [ "${1#-}" != "$1" ]; then
   set -- ebusd "$@"
 fi
 
-# set parameter "--foreground" to run ebusd in foreground
-set -- "$@" "--foreground"
+# set parameter "-f" to run ebusd in foreground
+set -- "$@" "-f"
 
 # disable updatecheck
 set -- "$@" "--updatecheck=off"
   
 # if environment variable EBUSD_ADDRESS is set then append parameter
 if [ "$EBUSD_ADDRESS" != "" ]; then
-  set -- "$@" "--address=$EBUSD_ADDRESS"
+  set -- "$@" "-a=$EBUSD_ADDRESS"
 fi
 
 # if environment variable EBUSD_SCANCONFIG is set then append parameter
 if [ "$EBUSD_SCANCONFIG" != "" ]; then
   if [ "$EBUSD_SCANCONFIG" == "default" ]; then
-    set -- "$@" "--scanconfig"
+    set -- "$@" "-s"
   else
-    set -- "$@" "--scanconfig=$EBUSD_SCANCONFIG"
+    set -- "$@" "-s=$EBUSD_SCANCONFIG"
   fi
 fi
 
 # if environment variable EBUSD_DEVICE is set then append parameter
 if [ "$EBUSD_DEVICE" != "" ]; then
-  set -- "$@" "--device=$EBUSD_DEVICE"
-  set -- "$@" "--nodevicecheck"
+  set -- "$@" "-d=$EBUSD_DEVICE"
+  # set nodevicecheck
+  set -- "$@" "-n"
 fi
 
 # if environment variable EBUSD_LATENCY is set then append parameter
@@ -75,7 +79,9 @@ if [ "$EBUSD_MQTTHOST" != "" ]; then
     MQTTTOPIC=$EBUSD_MQTTTOPIC
   fi
 
-  set -- "$@" "--mqtthost=$EBUSD_MQTTHOST --mqttport=$MQTTPORT --mqtttopic=$MQTTTOPIC"
+  set -- "$@" "--mqtthost=$EBUSD_MQTTHOST"
+  set -- "$@" "--mqttport=$MQTTPORT"
+  set -- "$@" "--mqtttopic=$MQTTTOPIC"
 
   # if environment variable EBUSD_MQTTRETAIN is set to true then append parameter
   if [ "$EBUSD_MQTTRETAIN" == "true" ]; then

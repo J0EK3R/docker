@@ -59,8 +59,8 @@ RUN apt-get install -y \
 WORKDIR /build
 
 # fetch source archive from github, expand it und build
-#RUN git clone https://github.com/john30/ebusd.git \
-RUN git clone https://github.com/J0EK3R/ebusd.git \
+RUN git clone https://github.com/john30/ebusd.git \
+#RUN git clone https://github.com/J0EK3R/ebusd.git \
   && cd ebusd \
   && ./autogen.sh \
   && make install-strip

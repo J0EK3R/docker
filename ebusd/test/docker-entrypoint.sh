@@ -9,7 +9,7 @@ MQTTTOPIC="ebusd/%circuit/%field"
 
 # if first parameter starts with "-" then command is missing
 # insert "ebusd" at first position as command
-if [ "$1" == "" ] || 
+if [ "$1" == "" ] ||
    [ "${1#-}" != "$1" ]; then
   set -- ebusd "$@"
 fi

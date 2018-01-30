@@ -30,11 +30,6 @@ ENV EBUSD_ARCH="amd64"
 LABEL maintainer="J0EK3R@gmx.net"
 LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
-# define start-script as entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
-#ENTRYPOINT ["/bin/bash"]
-CMD ["-f"]
-
 #########################################
 ##         RUN INSTALL SCRIPT          ##
 #########################################
@@ -79,8 +74,15 @@ RUN apt-get install -y nodejs
 
 RUN npm i frontail -g
 
+#########################################
+##           CONTAINER START           ##
+######################################### 
+
 # copy start-script into container
 COPY docker-entrypoint.sh /
+
+# define start-script as entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 #########################################
 ##         EXPORTS AND VOLUMES         ##

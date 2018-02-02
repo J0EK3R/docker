@@ -1,6 +1,38 @@
 #########################################
 ##            FLAVOR: TEST             ##
 #########################################
+
+#########################################
+##         FIRST STAGE: BUILD          ##
+#########################################
+FROM alpine:latest AS build
+
+#########################################
+##     INSTALL PACKAGES FOR BUILD      ##
+#########################################
+RUN apk add --no-cache \
+    argp-standalone \
+    autoconf \
+    automake \
+    bash \
+    g++ \
+    git \
+    make \
+    mosquitto-dev
+
+WORKDIR /build
+
+#RUN git clone https://github.com/john30/ebusd.git \
+RUN git clone https://github.com/J0EK3R/ebusd.git \
+ && cd ebusd \
+ && ./autogen.sh \
+ && make DESTDIR="/build/root" install-strip \
+ && cp -r contrib/etc /build/root/etc
+
+
+#########################################
+##            SECOND STAGE             ##
+#########################################
 FROM alpine:latest
 
 #########################################
@@ -48,42 +80,10 @@ RUN apk add --no-cache \
     mosquitto-libs++
 
 #########################################
-##     INSTALL PACKAGES FOR BUILD      ##
-#########################################
-RUN apk add --no-cache \
-    autoconf \
-    automake \
-    g++ \
-    git \
-    make \
-    mosquitto-dev
-
-#########################################
-##                BUILD                ##
+##        COPY FROM BUILD STAGE        ##
 #########################################
 
-WORKDIR /build
-
-#RUN git clone https://github.com/john30/ebusd.git \
-RUN git clone https://github.com/J0EK3R/ebusd.git \
- && cd ebusd \
- && ./autogen.sh \
- && make install-strip
-
-WORKDIR /
-
-RUN rm -rf /build
-
-#########################################
-##      REMOVE PACKAGES FOR BUILD      ##
-#########################################
-RUN apk del --no-cache \
-    autoconf \
-    automake \
-    g++ \
-    git \
-    make \
-    mosquitto-dev
+COPY --from=build /build/root /
 
 #########################################
 ##     DOWNLOAD MESSAGE DEFINITIONS    ##

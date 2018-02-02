@@ -15,11 +15,15 @@ RUN apk add --no-cache \
     autoconf \
     automake \
     bash \
+    curl \
     g++ \
     git \
     make \
     mosquitto-dev
 
+#########################################
+##       FETCH AND BUILD SOURCES       ##
+#########################################
 WORKDIR /build
 
 #RUN git clone https://github.com/john30/ebusd.git \
@@ -29,6 +33,17 @@ RUN git clone https://github.com/J0EK3R/ebusd.git \
  && make DESTDIR="/build/root" install-strip \
  && cp -r contrib/etc /build/root/etc
 
+#########################################
+##     DOWNLOAD MESSAGE DEFINITIONS    ##
+#########################################
+
+# download message definitions from github and expand them to /etc/ebusd
+RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz \
+    | tar xz --strip-components=3 -C /build/root/etc/ebusd ebusd-configuration-master/ebusd-2.1.x/de
+
+# download message definitions for Weishaupt WTC devices from github and expand them to /etc/ebusd
+RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
+    | tar xz --strip-components=1 -C /build/root/etc/ebusd ebusd-configuration-weishaupt-master
 
 #########################################
 ##            SECOND STAGE             ##
@@ -69,9 +84,8 @@ LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
 RUN apk add --no-cache \
     argp-standalone \
-    bash \
-    curl \
-    gnupg \
+#    bash \
+#    gnupg \
     libc6-compat \
     libgcc \
     libstdc++ \
@@ -84,19 +98,6 @@ RUN apk add --no-cache \
 #########################################
 
 COPY --from=build /build/root /
-
-#########################################
-##     DOWNLOAD MESSAGE DEFINITIONS    ##
-#########################################
-#RUN mkdir /etc/ebusd
-
-# download message definitions from github and expand them to /etc/ebusd
-RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz \
-    | tar xz --strip-components=3 -C /etc/ebusd ebusd-configuration-master/ebusd-2.1.x/de
-
-# download message definitions for Weishaupt WTC devices from github and expand them to /etc/ebusd
-RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
-    | tar xz --strip-components=1 -C /etc/ebusd ebusd-configuration-weishaupt-master
 
 #########################################
 ##           INSTALL FRONTAIL          ##

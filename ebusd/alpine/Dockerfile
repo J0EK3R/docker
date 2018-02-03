@@ -3,8 +3,9 @@
 ##                                                                              ##
 ## This Dockerfile builds an image for ebusd including the Weishaupt            ##
 ## message-definitions.                                                         ##
-## The image is a multistage build.                                             ##
-## First stage builds the ebusd binaries, second stage the  resulting image.    ##
+## The image is a multistage build:                                             ##
+## * first stage builds the ebusd binaries                                      ##
+## * second stage the resulting image                                           ##
 ##################################################################################
 
 ##################################################################################

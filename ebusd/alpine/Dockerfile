@@ -1,23 +1,20 @@
-#########################################
-##           FLAVOR: ALPINE            ##
-##                                     ##
-## This Dockerfile builds an image for ##
-## ebusd including the Weishaupt       ##
-## message-definitions.                ##
-## The image is a multistage build.    ##
-## First stage builds the ebusd        ##
-## binaries, second stage the          ##
-## resulting image.                    ##
-#########################################
+##################################################################################
+##           FLAVOR: ALPINE                                                     ##
+##                                                                              ##
+## This Dockerfile builds an image for ebusd including the Weishaupt            ##
+## message-definitions.                                                         ##
+## The image is a multistage build.                                             ##
+## First stage builds the ebusd binaries, second stage the  resulting image.    ##
+##################################################################################
 
-#########################################
-##         FIRST STAGE: BUILD          ##
-#########################################
+##################################################################################
+##         FIRST STAGE: BUILD                                                   ##
+##################################################################################
 FROM alpine:latest AS stage_build
 
-#########################################
-##     INSTALL PACKAGES FOR BUILD      ##
-#########################################
+##################################################################################
+##     INSTALL PACKAGES FOR BUILD                                               ##
+##################################################################################
 RUN apk add --no-cache \
     argp-standalone \
     autoconf \
@@ -29,11 +26,11 @@ RUN apk add --no-cache \
     make \
     mosquitto-dev
 
-#########################################
-##       FETCH AND BUILD SOURCES       ##
-##                                     ##
-## Results are copied to /build/root   ##
-#########################################
+##################################################################################
+##       FETCH AND BUILD SOURCES                                                ##
+##                                                                              ##
+## Results are copied to /build/root                                            ##
+##################################################################################
 WORKDIR /build
 
 #RUN git clone https://github.com/john30/ebusd.git \
@@ -43,12 +40,11 @@ RUN git clone https://github.com/J0EK3R/ebusd.git \
  && make DESTDIR="/build/root" install-strip \
  && cp -r contrib/etc /build/root/etc
 
-#########################################
-##     DOWNLOAD MESSAGE DEFINITIONS    ##
-##                                     ##
-## Message definitions  are copied to  ##
-## /build/root/etc/ebusd               ##
-#########################################
+##################################################################################
+##     DOWNLOAD MESSAGE DEFINITIONS                                             ##
+##                                                                              ##
+## Message definitions  are copied to /build/root/etc/ebusd                     ##
+##################################################################################
 
 # download message definitions from github and expand them to /etc/ebusd
 RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz \
@@ -58,14 +54,14 @@ RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz
 RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
     | tar xz --strip-components=1 -C /build/root/etc/ebusd ebusd-configuration-weishaupt-master
 
-#########################################
-##            SECOND STAGE             ##
-#########################################
+##################################################################################
+##            SECOND STAGE                                                      ##
+##################################################################################
 FROM alpine:latest
 
-#########################################
-##        ENVIRONMENTAL CONFIG         ##
-#########################################
+##################################################################################
+##        ENVIRONMENTAL CONFIG                                                  ##
+##################################################################################
 # Set correct environment variables 
 ENV EBUSD_ADDRESS="FF"
 ENV EBUSD_SCANCONFIG="full"
@@ -90,9 +86,9 @@ ENV EBUSD_ARCH="amd64"
 LABEL maintainer="J0EK3R@gmx.net"
 LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
-#########################################
-##         RUN INSTALL SCRIPT          ##
-#########################################
+##################################################################################
+##         RUN INSTALL SCRIPT                                                   ##
+##################################################################################
 # install required packages
 
 RUN apk add --no-cache \
@@ -104,15 +100,15 @@ RUN apk add --no-cache \
     mosquitto-libs \
     mosquitto-libs++
 
-#########################################
-##        COPY FROM BUILD STAGE        ##
-#########################################
+##################################################################################
+##        COPY FROM BUILD STAGE                                                 ##
+##################################################################################
 
 COPY --from=stage_build /build/root /
 
-#########################################
-##           INSTALL FRONTAIL          ##
-#########################################
+##################################################################################
+##           INSTALL FRONTAIL                                                   ##
+##################################################################################
 # get 
 #RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
 
@@ -124,9 +120,9 @@ COPY --from=stage_build /build/root /
 
 #RUN npm i frontail -g
 
-#########################################
-##           CONTAINER START           ##
-######################################### 
+##################################################################################
+##           CONTAINER START                                                    ##
+##################################################################################
 
 # copy start-script into container
 COPY docker-entrypoint.sh /
@@ -135,9 +131,9 @@ COPY docker-entrypoint.sh /
 #ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-#########################################
-##         EXPORTS AND VOLUMES         ##
-######################################### 
+##################################################################################
+##         EXPORTS AND VOLUMES                                                  ##
+##################################################################################
 # Export volumes
 
 # expose port for ebusd

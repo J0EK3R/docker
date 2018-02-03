@@ -1,5 +1,7 @@
 This Dockerfile builds an Alpine-bases image for ebusd including the Weishaupt message-definitions.                                                         
 
+https://hub.docker.com/r/j0ek3r/ebusd/
+
 The image is a multistage build:
 * first stage builds the ebusd binaries
 * second stage the  resulting image.

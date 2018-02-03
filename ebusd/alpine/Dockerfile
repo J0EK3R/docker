@@ -79,8 +79,6 @@ ENV EBUSD_MQTTPORT="1883"
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 ENV EBUSD_MQTTRETAIN="true"
 
-ENV EBUSD_FRONTAILPORT="80"
-
 ENV EBUSD_VERSION="3.1"
 ENV EBUSD_ARCH="amd64"
 
@@ -109,20 +107,6 @@ RUN apk add --no-cache \
 COPY --from=stage_build /build/root /
 
 ##################################################################################
-##           INSTALL FRONTAIL                                                   ##
-##################################################################################
-# get 
-#RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
-
-# install nodejs package
-#RUN apt-get install -y nodejs
-
-# remove ebusd package-file
-#RUN rm nodejs
-
-#RUN npm i frontail -g
-
-##################################################################################
 ##           CONTAINER START                                                    ##
 ##################################################################################
 
@@ -130,14 +114,13 @@ COPY --from=stage_build /build/root /
 COPY docker-entrypoint.sh /
 
 # define start-script as entrypoint
-#ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 ##################################################################################
 ##         EXPORTS AND VOLUMES                                                  ##
 ##################################################################################
 # Export volumes
+VOLUME /var/log
 
 # expose port for ebusd
 EXPOSE 8888
-EXPOSE $EBUSD_FRONTAILPORT

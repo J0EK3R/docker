@@ -83,7 +83,7 @@ ENV EBUSD_FRONTAILPORT="80"
 ENV EBUSD_VERSION="3.1"
 ENV EBUSD_ARCH="amd64"
 
-ENV TZ Europe/Berlin
+ENV TZ="Europe/Berlin"
 
 LABEL maintainer="J0EK3R@gmx.net"
 LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"

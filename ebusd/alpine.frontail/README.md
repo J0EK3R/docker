@@ -1,7 +1,4 @@
-This Dockerfile builds an Alpine-bases image for ebusd including the Weishaupt message-definitions.                                                         
-
-https://hub.docker.com/r/j0ek3r/ebusd/
-
+This Dockerfile builds an Alpine-based image for ebusd including the Weishaupt message-definitions and frontail on port 80 to watch ebusd-logs.
 The image is a multistage build:
 * first stage builds the ebusd binaries
 * second stage the  resulting image.
@@ -25,3 +22,5 @@ ENV EBUSD_MQTTHOST="mqtt.fritz.box"
 ENV EBUSD_MQTTPORT="1883"  
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"  
 ENV EBUSD_MQTTRETAIN="true"  
+
+ENV EBUSD_FRONTAILPORT="80"  

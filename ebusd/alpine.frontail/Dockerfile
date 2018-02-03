@@ -2,7 +2,7 @@
 ##           FLAVOR: ALPINE                                                     ##
 ##                                                                              ##
 ## This Dockerfile builds an image for ebusd including the Weishaupt            ##
-## message-definitions.                                                         ##
+## message-definitions an frontail for watching ebusd-log on port 80.           ##
 ## The image is a multistage build:                                             ##
 ## * first stage builds the ebusd binaries                                      ##
 ## * second stage the resulting image                                           ##
@@ -34,8 +34,7 @@ RUN apk add --no-cache \
 ##################################################################################
 WORKDIR /build
 
-#RUN git clone https://github.com/john30/ebusd.git \
-RUN git clone https://github.com/J0EK3R/ebusd.git \
+RUN git clone https://github.com/john30/ebusd.git \
  && cd ebusd \
  && ./autogen.sh \
  && make DESTDIR="/build/root" install-strip \

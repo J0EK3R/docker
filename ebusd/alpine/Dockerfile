@@ -93,6 +93,7 @@ LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
 RUN apk add --no-cache \
     argp-standalone \
+    bash \
     libc6-compat \
     libgcc \
     libstdc++ \

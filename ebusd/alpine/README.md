@@ -9,19 +9,19 @@ The variables correspond to the start-parameters of ebusd.
 
 Feel free to adjust them to your own needs...
 
-ENV EBUSD_ADDRESS="FF"
-ENV EBUSD_SCANCONFIG="full"
-ENV EBUSD_DEVICE="ebus.fritz.box:5000"
-ENV EBUSD_LATENCY="80000"
-ENV EBUSD_RECEIVETIMEOUT="25000"
-ENV EBUSD_ANSWER="true"
-ENV EBUSD_ENABLEHEX="true"
-ENV EBUSD_LOGLEVEL="notice"
-ENV EBUSD_LOGFILE="/var/log/ebusd.log"
+ENV EBUSD_ADDRESS="FF"  
+ENV EBUSD_SCANCONFIG="full"  
+ENV EBUSD_DEVICE="ebus.fritz.box:5000"  
+ENV EBUSD_LATENCY="80000"  
+ENV EBUSD_RECEIVETIMEOUT="25000"  
+ENV EBUSD_ANSWER="true"  
+ENV EBUSD_ENABLEHEX="true"  
+ENV EBUSD_LOGLEVEL="notice"  
+ENV EBUSD_LOGFILE="/var/log/ebusd.log"  
 
-ENV EBUSD_MQTTHOST="mqtt.fritz.box"
-ENV EBUSD_MQTTPORT="1883"
-ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
-ENV EBUSD_MQTTRETAIN="true"
+ENV EBUSD_MQTTHOST="mqtt.fritz.box"  
+ENV EBUSD_MQTTPORT="1883"  
+ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"  
+ENV EBUSD_MQTTRETAIN="true"  
 
-ENV EBUSD_FRONTAILPORT="80"
+ENV EBUSD_FRONTAILPORT="80"  

@@ -1,5 +1,5 @@
 ##################################################################################
-##           FLAVOR: ALPINE                                                     ##
+##           FLAVOR: ALPINE.FRONTAIL                                            ##
 ##                                                                              ##
 ## This Dockerfile builds an image for ebusd including the Weishaupt            ##
 ## message-definitions an frontail for watching ebusd-log on port 80.           ##
@@ -83,6 +83,8 @@ ENV EBUSD_FRONTAILPORT="80"
 ENV EBUSD_VERSION="3.1"
 ENV EBUSD_ARCH="amd64"
 
+ENV TZ Europe/Berlin
+
 LABEL maintainer="J0EK3R@gmx.net"
 LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 
@@ -100,7 +102,8 @@ RUN apk add --no-cache \
     libstdc++ \
     logrotate \
     mosquitto-libs \
-    mosquitto-libs++
+    mosquitto-libs++ \
+    tzdata
 
 ##################################################################################
 ##        COPY FROM BUILD STAGE                                                 ##

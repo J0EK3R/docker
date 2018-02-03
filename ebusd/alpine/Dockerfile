@@ -1,7 +1,66 @@
 #########################################
-##            FLAVOR: TEST             ##
+##           FLAVOR: ALPINE            ##
+##                                     ##
+## This Dockerfile builds an image for ##
+## ebusd including the Weishaupt       ##
+## message-definitions.                ##
+## The image is a multistage build.    ##
+## First stage builds the ebusd        ##
+## binaries, second stage the          ##
+## resulting image.                    ##
 #########################################
-#FROM debian:stretch-slim
+
+#########################################
+##         FIRST STAGE: BUILD          ##
+#########################################
+FROM alpine:latest AS stage_build
+
+#########################################
+##     INSTALL PACKAGES FOR BUILD      ##
+#########################################
+RUN apk add --no-cache \
+    argp-standalone \
+    autoconf \
+    automake \
+    bash \
+    curl \
+    g++ \
+    git \
+    make \
+    mosquitto-dev
+
+#########################################
+##       FETCH AND BUILD SOURCES       ##
+##                                     ##
+## Results are copied to /build/root   ##
+#########################################
+WORKDIR /build
+
+#RUN git clone https://github.com/john30/ebusd.git \
+RUN git clone https://github.com/J0EK3R/ebusd.git \
+ && cd ebusd \
+ && ./autogen.sh \
+ && make DESTDIR="/build/root" install-strip \
+ && cp -r contrib/etc /build/root/etc
+
+#########################################
+##     DOWNLOAD MESSAGE DEFINITIONS    ##
+##                                     ##
+## Message definitions  are copied to  ##
+## /build/root/etc/ebusd               ##
+#########################################
+
+# download message definitions from github and expand them to /etc/ebusd
+RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz \
+    | tar xz --strip-components=3 -C /build/root/etc/ebusd ebusd-configuration-master/ebusd-2.1.x/de
+
+# download message definitions for Weishaupt WTC devices from github and expand them to /etc/ebusd
+RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
+    | tar xz --strip-components=1 -C /build/root/etc/ebusd ebusd-configuration-weishaupt-master
+
+#########################################
+##            SECOND STAGE             ##
+#########################################
 FROM alpine:latest
 
 #########################################
@@ -35,49 +94,25 @@ LABEL version="${EBUSD_VERSION}-${EBUSD_ARCH}"
 ##         RUN INSTALL SCRIPT          ##
 #########################################
 # install required packages
-#RUN apt-get update \
-#  && apt-get install -y \
-#    curl \
-#    git \
-#    gnupg \
-#    libc6 \
-#    libgcc1 \
-#    libmosquitto1 \
-#    libstdc++6 \
-#    logrotate \
-#  && rm -rf /var/lib/apt/lists/*
 
 RUN apk add --no-cache \
-    curl \
-    binutils \
-    gnupg \
+    argp-standalone \
     libc6-compat \
     libgcc \
     libstdc++ \
     logrotate \
-    mosquitto-libs
+    mosquitto-libs \
+    mosquitto-libs++
 
-# get ebusd-package direct from ebusd-project on github
-RUN curl -SL https://github.com/john30/ebusd/releases/download/v${EBUSD_VERSION}/ebusd-${EBUSD_VERSION}_${EBUSD_ARCH}-stretch_mqtt1.deb > ebusd.deb
+#########################################
+##        COPY FROM BUILD STAGE        ##
+#########################################
 
-# install ebusd package
-#RUN dpkg -i ebusd.deb
-RUN ar xo ebusd.deb data.tar.xz \
-  && tar xf data.tar.xz -C /
+COPY --from=stage_build /build/root /
 
-# remove ebusd package-file
-RUN rm ebusd.deb
-
-#RUN mkdir /etc/ebusd
-
-# download message definitions from github and expand them to /etc/ebusd
-RUN curl -SL https://github.com/john30/ebusd-configuration/archive/master.tar.gz \
-    | tar xz --strip-components=3 -C /etc/ebusd ebusd-configuration-master/ebusd-2.1.x/de
-
-# download message definitions for Weishaupt WTC devices from github and expand them to /etc/ebusd
-RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/master.tar.gz \
-    | tar xz --strip-components=1 -C /etc/ebusd ebusd-configuration-weishaupt-master
-
+#########################################
+##           INSTALL FRONTAIL          ##
+#########################################
 # get 
 #RUN curl -sL https://deb.nodesource.com/setup_9.x | bash -
 
@@ -97,6 +132,7 @@ RUN curl -SL https://github.com/J0EK3R/ebusd-configuration-weishaupt/archive/mas
 COPY docker-entrypoint.sh /
 
 # define start-script as entrypoint
+#ENTRYPOINT ["/bin/bash"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 #########################################

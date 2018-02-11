@@ -1,0 +1,7 @@
+{
+    "lines": {
+        "err": "color: red;",
+        "[bus notice]": "background-color: lightblue; color: black;"
+    }
+}
+

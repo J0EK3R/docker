@@ -78,8 +78,6 @@ ENV EBUSD_MQTTPORT="1883"
 ENV EBUSD_MQTTTOPIC="ebusd/%circuit/%name/%field"
 ENV EBUSD_MQTTRETAIN="true"
 
-ENV EBUSD_FRONTAILPORT="80"
-
 ENV EBUSD_VERSION="3.1"
 ENV EBUSD_ARCH="amd64"
 
@@ -109,6 +107,11 @@ RUN apk add --no-cache \
 COPY --from=stage_build /build/root /
 
 ##################################################################################
+##        COPY LOCAL FILES                                                      ##
+##################################################################################
+COPY root /
+
+##################################################################################
 ##           INSTALL FRONTAIL                                                   ##
 ##################################################################################
 
@@ -117,9 +120,6 @@ RUN npm i frontail -g
 ##################################################################################
 ##           CONTAINER START                                                    ##
 ##################################################################################
-
-# copy start-script into container
-COPY docker-entrypoint.sh /
 
 # define start-script as entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]
@@ -132,4 +132,4 @@ VOLUME /var/log
 
 # expose port for ebusd
 EXPOSE 8888
-EXPOSE $EBUSD_FRONTAILPORT
+EXPOSE 80

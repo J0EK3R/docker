@@ -92,7 +92,7 @@ set -- "$@" "--updatecheck=off"
 # if environment variable EBUSD_LOGFILE is set then tee console output to logfile
 if [ "$EBUSD_LOGFILE" != "" ]; then
 
-  FRONTAILCMD="/usr/bin/frontail -p 80 -l 2000 -n 200 --ui-highlight-preset /etc/frontail/ebusd.json $EBUSD_LOGFILE"
+  FRONTAILCMD="/usr/bin/frontail -p 80 -l 2000 -n 200 --ui-highlight --ui-highlight-preset /etc/frontail/ebusd.json $EBUSD_LOGFILE"
   echo "Starting with frontail: $FRONTAILCMD" |& tee -a $EBUSD_LOGFILE
 
   $FRONTAILCMD |& tee -a $EBUSD_LOGFILE &

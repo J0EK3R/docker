@@ -34,8 +34,8 @@ RUN apk add --no-cache \
 ##################################################################################
 WORKDIR /build
 
-# RUN git clone https://github.com/john30/ebusd.git \
-RUN git clone https://github.com/J0EK3R/ebusd.git \
+RUN git clone https://github.com/john30/ebusd.git \
+# RUN git clone https://github.com/J0EK3R/ebusd.git \
  && cd ebusd \
  && ./autogen.sh \
  && make DESTDIR="/build/root" install-strip \

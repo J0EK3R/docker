@@ -79,7 +79,7 @@ if [ "$EBUSD_MQTTHOST" != "" ]; then
   set -- "$@" "--mqtthost=$EBUSD_MQTTHOST"
   set -- "$@" "--mqttport=$MQTTPORT"
   set -- "$@" "--mqtttopic=$MQTTTOPIC"
-  set -- "$@" "--mqttignoreinvalid"
+  # set -- "$@" "--mqttignoreinvalid"
   
   # if environment variable EBUSD_MQTTRETAIN is set to true then append parameter
   if [ "$EBUSD_MQTTRETAIN" == "true" ]; then
